@@ -69,12 +69,11 @@ def showHistgram(l, filename):
 
 
 index = 1
-filenames = ['sample2.png', 'sample3.pgm', 'sample4.pgm', 'fun.png']
+filenames = ['sample2.pgm', 'sample3.pgm', 'sample4.pgm', 'fun.png']
 imgs = loadImgs()
-img_gray = cv.cvtColor(imgs[index], cv.COLOR_RGB2GRAY)
-lumin = getLuminance(img_gray)
-p = getPBright(img_gray)
-img_bit = percentileMethod(p, img_gray, True)
-cv.imwrite("./imgs/bit_" + filename + ".png", img_bit)
-cv.imshow('hoge', img_bit)
-showHistgram(lumin, "filename")
+lumin = getLuminance(imgs[index])
+p = getPBright(imgs[index])
+img_bit = percentileMethod(p, imgs[index], True)
+cv.imwrite("./imgs/bit_" + filenames[index] + ".png", img_bit)
+cv.imshow(filenames[index], img_bit)
+showHistgram(lumin, filenames[index])
