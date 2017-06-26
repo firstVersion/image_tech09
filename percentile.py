@@ -26,19 +26,24 @@ def getLuminances(images):
         lums.append(getLuminance(imgs[i]))
     return lums
 
+
 def getPBright(image):
     l = getLuminance(image)
-    Left_x, Right_x = 0,255
-    for is_Left in [True,False]:
-        for i in range(256) if is_Left else reversed(range(256)) :
-            if l[i] > 0 and is_Left :
-                Left_x = i; break
-            else :
-                Right_x = i; break
-    center = int(Left_x + round((Right_x - Left_x)/2.0))
-    L_x, R_x = np.where(l[0:center]==max(l[0:center]))[0][0], np.where(l[center+1:255]==max(l[center+1:255]))[0][0]+center
+    Left_x, Right_x = 0, 255
+    for is_Left in [True, False]:
+        for i in range(256) if is_Left else reversed(range(256)):
+            if l[i] > 0 and is_Left:
+                Left_x = i
+                break
+            else:
+                Right_x = i
+                break
+    center = int(Left_x + round((Right_x - Left_x) / 2.0))
+    L_x, R_x = np.where(l[0:center] == max(l[0:center]))[0][0], np.where(
+        l[center + 1:255] == max(l[center + 1:255]))[0][0] + center
     hoge = l[center:255]
-    return ( (sum(hoge[np.average(hoge)<hoge])+sum(hoge))/2.0 )/sum(l)
+    return ((sum(hoge[np.average(hoge) < hoge]) + sum(hoge)) / 2.0) / sum(l)
+
 
 def percentileMethod(p, img, from_bright):
     l = getLuminance(img)
@@ -62,13 +67,14 @@ def showHistgram(l, filename):
     plt.title("histgram of luminance about " + filename)
     plt.show()
 
+
 index = 1
 filenames = ['sample2.png', 'sample3.pgm', 'sample4.pgm', 'fun.png']
 imgs = loadImgs()
 img_gray = cv.cvtColor(imgs[index], cv.COLOR_RGB2GRAY)
-lumin = getLuminance(img_gray);
+lumin = getLuminance(img_gray)
 p = getPBright(img_gray)
-img_bit = percentileMethod(p,img_gray,True)
-cv.imwrite("./imgs/bit_"+filename+".png",img_bit)
-cv.imshow('hoge',img_bit);
-showHistgram(lumin,"filename");
+img_bit = percentileMethod(p, img_gray, True)
+cv.imwrite("./imgs/bit_" + filename + ".png", img_bit)
+cv.imshow('hoge', img_bit)
+showHistgram(lumin, "filename")
