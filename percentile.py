@@ -155,14 +155,14 @@ class CountChain(object):
     def labeling(self):
         for y in range(self.img.shape[0]):
             for x in range(self.img.shape[1]):
-                p = [y,x]
                 if self.img[y,x] == 255:
-                    if self.__is_label( self.__left(p) ) and self.__is_label( self.__up(p) ) :
+                    up,left = self.__up([y,x]),self.__left([y,x])
+                    if self.__is_label( left ) and self.__is_label( up ) :
                         self.labels[y,x] = self.labels[y-1,x]
                         if self.labels[y,x] != self.labels[y,x-1] : self.lut.set(self.labels[y,x],self.labels[y,x-1])
-                    elif self.__is_white( self.__left(p) ) and self.__is_label( self.__up(p) ) : self.labels[y,x] = self.labels[y-1,x]
-                    elif self.__is_white( self.__up(p) ) and self.__is_label( self.__left(p) ) : self.labels[y,x] = self.labels[y,x-1]
-                    elif self.__is_white( self.__up(p) ) and self.__is_white( self.__left(p) ) : self.labels[y,x] = int(self.__new_label())
+                    elif self.__is_white( left ) and self.__is_label( up ) : self.labels[y,x] = self.labels[y-1,x]
+                    elif self.__is_white( up ) and self.__is_label( left ) : self.labels[y,x] = self.labels[y,x-1]
+                    elif self.__is_white( up ) and self.__is_white( left ) : self.labels[y,x] = int(self.__new_label())
         self.__flesh()
         print "number of labels is ",self.lut.number_of_label()
 
