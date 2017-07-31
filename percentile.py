@@ -7,7 +7,7 @@ import sys
 #import countchain as cc
 np.set_printoptions(threshold=np.inf)
 
-def loadImgs():
+def loadImgs(filenames):
     res = []
     for filename in filenames:
         img = cv.imread("./imgs/" + filename)
@@ -112,7 +112,11 @@ class LookUpTable(object):
         for index, table in enumerate(self.__LookUpTable):
             if px in table :
                 return index+1;
-        return -1
+        self.__both_append([px])
+        return self.lookup(px)
+
+    def number_of_label(self):
+        return len(self.__LookUpTable)
 
 class CountChain(object):
 
@@ -160,6 +164,7 @@ class CountChain(object):
                     elif self.__is_white( self.__up(p) ) and self.__is_label( self.__left(p) ) : self.labels[y,x] = self.labels[y,x-1]
                     elif self.__is_white( self.__up(p) ) and self.__is_white( self.__left(p) ) : self.labels[y,x] = int(self.__new_label())
         self.__flesh()
+        print "number of labels is ",self.lut.number_of_label()
 
     def get_chain_img(self):
         if self.isset:
@@ -172,23 +177,24 @@ class CountChain(object):
                       self.chain[y,x] = [0,0,0]
                   else :
                       h = self.map(self.labels[y,x],0,14,0,255)
-                      self.chain[y,x] = [h,256-h,h**2]
+                      self.chain[y,x] = [h,256-h,h**3]
             return self.chain
 
 
-#index = 1
-#filenames = ['sample2.pgm', 'sample3.pgm', 'sample4.pgm', 'fun.png']
-#imgs = loadImgs()
-#lumin = getLuminance(imgs[index])
-#p = getPBright(imgs[index])
-#img_bit = percentileMethod(p, imgs[index], True)
-#cv.imwrite("./imgs/bit_" + filenames[index] + ".png", img_bit)
-#cv.imshow(filenames[index], img_bit)
+def main():
+    sys.setrecursionlimit(20000)
+    index = 0
+    filenames = ['sample2.pgm', 'sample3.pgm', 'sample4.pgm', 'fun.png']
+    imgs = loadImgs(filenames)
+    lumin = getLuminance(imgs[index])
+    p = getPBright(imgs[index])
+    img_bit = percentileMethod(p, imgs[index], True)
+    cv.imwrite("./imgs/bit_" + filenames[index] + ".png", img_bit)
+    cv.imshow(filenames[index], img_bit)
+    cc = CountChain("./imgs/bit_" + filenames[index] + ".png")
+    cc.labeling()
+    cv.imshow("chain",cc.get_chain_img())
+    cv.imwrite("hoge.png",cc.get_chain_img())
+    cv.waitKey()
 
-
-sys.setrecursionlimit(20000)
-cc = CountChain("./imgs/bit_sample4.png")
-cc.labeling()
-cv.imshow("fff",cc.get_chain_img())
-cv.imwrite("hoge.png",cc.get_chain_img())
-cv.waitKey()
+if __name__ == "__main__": main()
