@@ -104,9 +104,12 @@ class LookUpTable(object):
         pxs = [px1,px2]
         i_1,i_2 = self.__fetch_index( px1, px2 )
         if self.is_same(i_1) and self.is_same(i_2) : return
-        elif self.is_not_found(i_1) and self.is_not_found(i_2) : self.__both_append(pxs)
-        elif self.is_not_found(i_1) or self.is_not_found(i_2) : self.__one_side_append(pxs,[i_1,i_2])
-        elif i_1 != i_2 : self.__merge(pxs,[i_1,i_2])
+        elif self.is_not_found(i_1) and self.is_not_found(i_2) :
+            self.__both_append(pxs)
+        elif self.is_not_found(i_1) or self.is_not_found(i_2) :
+            self.__one_side_append(pxs,[i_1,i_2])
+        elif i_1 != i_2 :
+            self.__merge(pxs,[i_1,i_2])
 
     def lookup(self,px):
         for index, table in enumerate(self.__LookUpTable):
@@ -159,10 +162,14 @@ class CountChain(object):
                     up,left = self.__up([y,x]),self.__left([y,x])
                     if self.__is_label( left ) and self.__is_label( up ) :
                         self.labels[y,x] = self.labels[y-1,x]
-                        if self.labels[y,x] != self.labels[y,x-1] : self.lut.set(self.labels[y,x],self.labels[y,x-1])
-                    elif self.__is_white( left ) and self.__is_label( up ) : self.labels[y,x] = self.labels[y-1,x]
-                    elif self.__is_white( up ) and self.__is_label( left ) : self.labels[y,x] = self.labels[y,x-1]
-                    elif self.__is_white( up ) and self.__is_white( left ) : self.labels[y,x] = int(self.__new_label())
+                        if self.labels[y,x] != self.labels[y,x-1] :
+                            self.lut.set(self.labels[y,x],self.labels[y,x-1])
+                    elif self.__is_white( left ) and self.__is_label( up ) :
+                        self.labels[y,x] = self.labels[y-1,x]
+                    elif self.__is_white( up ) and self.__is_label( left ) :
+                        self.labels[y,x] = self.labels[y,x-1]
+                    elif self.__is_white( up ) and self.__is_white( left ) :
+                        self.labels[y,x] = int(self.__new_label())
         self.__flesh()
         print "number of labels is ",self.lut.number_of_label()
 
@@ -183,7 +190,7 @@ class CountChain(object):
 
 def main():
     sys.setrecursionlimit(20000)
-    index = 0
+    index = 2
     filenames = ['sample2.pgm', 'sample3.pgm', 'sample4.pgm', 'fun.png']
     imgs = loadImgs(filenames)
     lumin = getLuminance(imgs[index])
@@ -194,7 +201,7 @@ def main():
     cc = CountChain("./imgs/bit_" + filenames[index] + ".png")
     cc.labeling()
     cv.imshow("chain",cc.get_chain_img())
-    cv.imwrite("hoge.png",cc.get_chain_img())
+    cv.imwrite("./imgs/chain_" + filenames[index] + ".png",cc.get_chain_img())
     cv.waitKey()
 
 if __name__ == "__main__": main()
